@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LENNOY – Spiele, Kunst & KI</title>
+
+  <style>
+    :root{
+      --violett: #a41b85;
+      --blau:    #006bb3;
+      --gruen:   #00a652;
+      --orange:  #f9961e;
+
+      --bg:      #050505;
+      --bg-soft: #141414;
+      --text:    #f4f4f4;
+      --muted:   #b8b8b8;
+      --accent:  #ffffff;
+      --radius-lg: 22px;
+      --radius-sm: 14px;
+      --shadow-soft: 0 14px 35px rgba(0,0,0,0.55);
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html,body{
+      height:100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #151515 0, #000 55%);
+      color:var(--text);
+    }
+
+    body{
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    /* --- Layout --- */
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.65));
+      border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+
+    .nav-inner{
+      max-width:1120px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 18px;
+      gap:16px;
+    }
+
+    .nav-logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .nav-logo img{
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      box-shadow: 0 0 0 3px #000, 0 0 28px rgba(0,0,0,0.8);
+      object-fit:cover;
+    }
+
+    .nav-logo span{
+      font-weight:700;
+      letter-spacing:0.16em;
+      font-size:0.8rem;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    nav ul{
+      display:flex;
+      flex-wrap:wrap;
+      list-style:none;
+      gap:8px;
+    }
+
+    nav li a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:7px 14px;
+      border-radius:999px;
+      font-size:0.8rem;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(5,5,5,0.75);
+      transition:background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    nav li a:hover{
+      background:linear-gradient(135deg,var(--orange),var(--gruen));
+      border-color:transparent;
+      box-shadow:0 10px 25px rgba(0,0,0,0.7);
+      transform:translateY(-1px);
+    }
+
+    main{
+      flex:1;
+    }
+
+    .hero{
+      max-width:1120px;
+      margin:0 auto;
+      padding:30px 18px 10px;
+      display:grid;
+      grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);
+      gap:40px;
+      align-items:center;
+    }
+
+    .hero-text h1{
+      font-size:2.4rem;
+      line-height:1.08;
+      margin-bottom:10px;
+    }
+
+    .hero-text h1 span{
+      background:linear-gradient(135deg,var(--orange),var(--gruen),var(--blau),var(--violett));
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+
+    .hero-text p{
+      color:var(--muted);
+      line-height:1.6;
+      margin-bottom:18px;
+      max-width:34rem;
+    }
+
+    .hero-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:10px;
+      font-size:0.78rem;
+      text-transform:uppercase;
+      letter-spacing:0.09em;
+    }
+
+    .badge{
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(0,0,0,0.55);
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .badge-dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+    }
+
+    .badge-dot--1{ background:var(--orange);}
+    .badge-dot--2{ background:var(--gruen);}
+    .badge-dot--3{ background:var(--blau);}
+    .badge-dot--4{ background:var(--violett);}
+
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:6px;
+    }
+
+    .btn-primary,
+    .btn-ghost{
+      padding:9px 16px;
+      border-radius:999px;
+      font-size:0.86rem;
+      font-weight:600;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      border:1px solid transparent;
+      background:none;
+      color:var(--accent);
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg,var(--orange),var(--violett));
+      box-shadow:0 12px 30px rgba(0,0,0,0.7);
+    }
+
+    .btn-primary:hover{
+      filter:brightness(1.05);
+      transform:translateY(-1px);
+    }
+
+    .btn-ghost{
+      border-color:rgba(255,255,255,0.2);
+      background:rgba(0,0,0,0.6);
+    }
+
+    .btn-ghost:hover{
+      background:rgba(255,255,255,0.06);
+    }
+
+    .hero-media{
+      display:flex;
+      justify-content:center;
+    }
+
+    .hero-card{
+      width:100%;
+      max-width:340px;
+      border-radius:calc(var(--radius-lg) + 4px);
+      padding:16px 16px 18px;
+      background:radial-gradient(circle at top, #262626 0, #050505 50%, #000 100%);
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(255,255,255,0.08);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-logo-wrap{
+      display:flex;
+      justify-content:center;
+      margin-bottom:16px;
+    }
+
+    .hero-logo-wrap img{
+      width:80%;
+      max-width:260px;
+      border-radius:50%;
+      box-shadow:0 0 0 6px #000, 0 0 0 9px rgba(255,255,255,0.1);
+      object-fit:cover;
+    }
+
+    .hero-card-footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      font-size:0.75rem;
+      color:var(--muted);
+    }
+
+    .dot-row{
+      display:flex;
+      gap:6px;
+    }
+
+    .dot-row span{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      opacity:0.85;
+    }
+
+    .dot-row .d1{ background:var(--orange); }
+    .dot-row .d2{ background:var(--gruen); }
+    .dot-row .d3{ background:var(--blau); }
+    .dot-row .d4{ background:var(--violett); }
+
+    .hero-card small{
+      opacity:0.75;
+    }
+
+    /* --- Sections --- */
+
+    section{
+      max-width:1120px;
+      margin:0 auto;
+      padding:40px 18px 10px;
+    }
+
+    .section-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .section-title{
+      font-size:1.25rem;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+    }
+
+    .section-sub{
+      font-size:0.9rem;
+      color:var(--muted);
+      max-width:26rem;
+    }
+
+    .media-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+      gap:16px;
+    }
+
+    .media-card{
+      background:var(--bg-soft);
+      border-radius:var(--radius-sm);
+      border:1px solid rgba(255,255,255,0.06);
+      padding:10px 10px 11px;
+      box-shadow:0 10px 28px rgba(0,0,0,0.6);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-height:120px;
+    }
+
+    .media-thumb{
+      position:relative;
+      overflow:hidden;
+      border-radius:14px;
+      background:radial-gradient(circle at top,var(--blau),#111);
+      min-height:120px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .media-thumb img,
+    .media-thumb video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .media-thumb .placeholder{
+      font-size:0.8rem;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:rgba(255,255,255,0.78);
+      text-align:center;
+      padding:0 10px;
+    }
+
+    figure{
+      margin:0;
+    }
+
+    figcaption{
+      font-size:0.85rem;
+      color:var(--muted);
+    }
+
+    .tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:2px;
+    }
+
+    .tag{
+      font-size:0.7rem;
+      text-transform:uppercase;
+      letter-spacing:0.11em;
+      padding:4px 7px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .tag--spiele{ border-color:var(--orange); }
+    .tag--art{ border-color:var(--violett); }
+    .tag--paint{ border-color:var(--gruen); }
+    .tag--time{ border-color:var(--blau); }
+    .tag--ki{ border-color:var(--blau); }
+
+    footer{
+      padding:24px 18px 28px;
+      text-align:center;
+      font-size:0.8rem;
+      color:var(--muted);
+      border-top:1px solid rgba(255,255,255,0.06);
+      background:#000;
+      margin-top:32px;
+    }
+
+    footer span{
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      font-size:0.72rem;
+    }
+
+    /* --- Helpers --- */
+
+    .color-accent-orange{ color:var(--orange); }
+    .color-accent-ki{ color:var(--blau); }
+
+    /* --- Responsive --- */
+
+    @media (max-width: 840px){
+      .hero{
+        grid-template-columns:minmax(0,1fr);
+        padding-top:22px;
+      }
+
+      .hero-media{
+        order:-1;
+      }
+
+      .hero-card{
+        max-width:420px;
+      }
+
+      .hero-text h1{
+        font-size:2.05rem;
+      }
+    }
+
+    @media (max-width: 560px){
+      .nav-inner{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      nav ul{
+        justify-content:flex-start;
+      }
+      .hero-text h1{
+        font-size:1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======= Navigation ======= -->
+  <header>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <!-- DEIN LOGO HIER EINBINDEN -->
+        <img src="images/lennoy-logo.png" alt="LENNOY Logo" />
+        <span>LENNOY • PINSel, Bits &amp; Beats</span>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="#spiele">Spiele</a></li>
+          <li><a href="#karikaturen">Karikaturen</a></li>
+          <li><a href="#acryl">Acryl/Aquarell</a></li>
+          <li><a href="#zeitraffer">Zeitraffer</a></li>
+          <li><a href="#ki">KI-Musik/-Videos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======= Hero ======= -->
+  <main>
+    <section class="hero">
+      <div class="hero-text">
+        <div class="hero-badges">
+          <div class="badge">
+            <span class="badge-dot badge-dot--1"></span>Spiele
+          </div>
+          <div class="badge">
+            <span class="badge-dot badge-dot--2"></span>Kunst
+          </div>
+          <div class="badge">
+            <span class="badge-dot badge-dot--3"></span>Zeitraffer
+          </div>
+          <div class="badge">
+            <span class="badge-dot badge-dot--4"></span>KI-Musik &amp; Videos
+          </div>
+        </div>
+
+        <h1><span>LENNOY</span> – Spiele, Bilder &amp; Beats in Farbe</h1>
+
+        <p>
+          Ein Ort für alles, was in deinem Kopf entsteht: Logik-Spiele, freche
+          Karikaturen, Acryl- &amp; Aquarell-Arbeiten, Zeitraffer-Experimente
+          und KI-Musik mit eigenen Videos.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#spiele" class="btn-primary">Zu den Spielen</a>
+          <a href="#ki" class="btn-ghost">KI-Musik entdecken</a>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <article class="hero-card">
+          <div class="hero-logo-wrap">
+            <!-- Hero-Logo (kann dasselbe Bild sein wie im Header) -->
+            <img src="images/lennoy-logo.png" alt="LENNOY Logo groß" />
+          </div>
+          <div class="hero-card-footer">
+            <div>
+              <div class="dot-row">
+                <span class="d1"></span>
+                <span class="d2"></span>
+                <span class="d3"></span>
+                <span class="d4"></span>
+              </div>
+              <small>Vier Farben. Viele Ideen.</small>
+            </div>
+            <small>LENNOY • seit <span class="color-accent-orange">immer schon kreativ</span></small>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ======= SPIELE ======= -->
+    <section id="spiele">
+      <div class="section-header">
+        <h2 class="section-title">Spiele</h2>
+        <p class="section-sub">
+          Digitale &amp; analoge Brain-Games aus der LENNOY-Werkstatt. Hier kannst du
+          Screenshots, kurze Erklärungen und Links zu Apps oder Regeln einfügen.
+        </p>
+      </div>
+
+      <div class="media-grid">
+        <!-- KARTEN MIT DEINEN SPIELEN BESTÜCKEN -->
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- Beispielbild ersetzen -->
+            <span class="placeholder">Bild / Screenshot von KIPP oder anderen LENNOY-Spielen</span>
+            <!-- <img src="media/spiele/kipp-01.jpg" alt="KIPP Screenshot" /> -->
+          </div>
+          <figcaption>
+            <strong>KIPP &amp; Co.</strong><br />
+            Kurzer Teaser-Text zu deinen Logik-Spielen. Regeln, Screenshots,
+            Download-Links usw.
+            <div class="tag-row">
+              <span class="tag tag--spiele">Brain Game</span>
+              <span class="tag tag--spiele">LENNOY</span>
+            </div>
+          </figcaption>
+        </figure>
+
+        <figure class="media-card">
+          <div class="media-thumb">
+            <span class="placeholder">Hier ein weiteres Spiel-Motiv einfügen</span>
+          </div>
+          <figcaption>
+            <strong>Neues Spiel</strong><br />
+            Platzhalter für ein zweites Spiel. Einfach Bild und Text austauschen.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======= KARIKATUREN ======= -->
+    <section id="karikaturen">
+      <div class="section-header">
+        <h2 class="section-title">Karikaturen</h2>
+        <p class="section-sub">
+          Auftrags-Karikaturen, Live-Zeichnungen oder freie Projekte. Dieser Bereich
+          lebt von starken Bildern – am besten 2–6 Beispiele.
+        </p>
+      </div>
+
+      <div class="media-grid">
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- <img src="media/karikaturen/karikatur-1.jpg" alt="Karikatur Motiv 1" /> -->
+            <span class="placeholder">Karikatur-Bild hier einsetzen</span>
+          </div>
+          <figcaption>
+            <strong>Porträt-Karikatur</strong><br />
+            Kurze Beschreibung (z.&nbsp;B. Anlass, Stil, Technik).
+            <div class="tag-row">
+              <span class="tag tag--art">Karikatur</span>
+            </div>
+          </figcaption>
+        </figure>
+
+        <figure class="media-card">
+          <div class="media-thumb">
+            <span class="placeholder">Weitere Karikatur oder Collage</span>
+          </div>
+          <figcaption>
+            <strong>Event-Karikatur</strong><br />
+            Platzhalter-Text, den du mit Infos zu Auftragsarbeiten ersetzt.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======= ACRYL / AQUARELL ======= -->
+    <section id="acryl">
+      <div class="section-header">
+        <h2 class="section-title">Acryl / Aquarell</h2>
+        <p class="section-sub">
+          Leinwand, Papier, Pigmente. Zeig hier deine Serien, Auftragsarbeiten oder
+          Lieblingsmotive – gern mit Detail-Fotos.
+        </p>
+      </div>
+
+      <div class="media-grid">
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- <img src="media/acryl/motiv-1.jpg" alt="Acrylbild 1" /> -->
+            <span class="placeholder">Acryl-Bild oder Aquarell einsetzen</span>
+          </div>
+          <figcaption>
+            <strong>Serie / Motiv-Name</strong><br />
+            Kurzer Text zur Technik (z.&nbsp;B. Acryl auf Leinwand, Aquarell).
+            <div class="tag-row">
+              <span class="tag tag--paint">Acryl</span>
+            </div>
+          </figcaption>
+        </figure>
+
+        <figure class="media-card">
+          <div class="media-thumb">
+            <span class="placeholder">Noch ein Bild – oder Detail-Ausschnitt</span>
+          </div>
+          <figcaption>
+            <strong>Aquarell</strong><br />
+            Beschreibung, z.&nbsp;B. Format, Stimmung, Serie.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======= ZEITRAFFER ======= -->
+    <section id="zeitraffer">
+      <div class="section-header">
+        <h2 class="section-title">Zeitraffer</h2>
+        <p class="section-sub">
+          Vom ersten Strich bis zum fertigen Bild: Hier kannst du deine
+          Zeitraffer-Videos einbetten – entweder lokal oder über YouTube/Vimeo.
+        </p>
+      </div>
+
+      <div class="media-grid">
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- Beispiel mit lokalem Video -->
+            <!--
+            <video src="media/zeitraffer/painting-1.mp4" controls></video>
+            -->
+            <span class="placeholder">Zeitraffer-Video (Video-Datei einfügen)</span>
+          </div>
+          <figcaption>
+            <strong>Painting-Timelapse</strong><br />
+            Infos zum Motiv &amp; zur Dauer.  
+            <div class="tag-row">
+              <span class="tag tag--time">Timelapse</span>
+            </div>
+          </figcaption>
+        </figure>
+
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- Beispiel, wenn du statt Datei ein Embed nimmst:
+            <iframe src="https://www.youtube.com/embed/DEIN_VIDEO" 
+                    title="YouTube video" frameborder="0"
+                    allowfullscreen></iframe>
+            -->
+            <span class="placeholder">Optional YouTube/Vimeo-Embed</span>
+          </div>
+          <figcaption>
+            <strong>Sketch-Timelapse</strong><br />
+            Platzhalter-Text für weiteres Zeitraffer-Material.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ======= KI-MUSIK / -VIDEOS ======= -->
+    <section id="ki">
+      <div class="section-header">
+        <h2 class="section-title">KI-Musik / -Videos</h2>
+        <p class="section-sub">
+          Hier bekommen deine KI-Songs und generierten Musik-Videos ihre Bühne.
+          Kombiniere Audio-Player, Cover-Art und Video-Clips.
+        </p>
+      </div>
+
+      <div class="media-grid">
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- Coverbild + Audio -->
+            <!-- <img src="media/ki/cover-song-1.jpg" alt="Song Cover" /> -->
+            <span class="placeholder">Cover-Bild für KI-Song</span>
+          </div>
+          <figcaption>
+            <strong>Songtitel – LENNOY</strong><br />
+            Kurzer Text zur Idee, Prompt oder Stimmung.
+            <audio controls style="width:100%; margin-top:6px;">
+              <!-- DEINE AUDIODATEI:
+              <source src="media/ki/song-1.mp3" type="audio/mpeg" />
+              -->
+              Dein Browser unterstützt den Audio-Tag nicht.
+            </audio>
+            <div class="tag-row">
+              <span class="tag tag--ki">KI-Musik</span>
+            </div>
+          </figcaption>
+        </figure>
+
+        <figure class="media-card">
+          <div class="media-thumb">
+            <!-- <video src="media/ki/video-1.mp4" controls></video> -->
+            <span class="placeholder">KI-Musikvideo oder Visualizer einfügen</span>
+          </div>
+          <figcaption>
+            <strong>KI-Video</strong><br />
+            Platzhalter für ein Video – entweder Datei oder z.&nbsp;B. YouTube-Embed.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======= Footer ======= -->
+  <footer>
+    <div>© <span>LENNOY</span> – Pinsel, Bits &amp; Beats.</div>
+  </footer>
+
+</body>
+</html>
